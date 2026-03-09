@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>yt-ripper</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 520px;
+    }
+
+    h1 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #fff;
+    }
+
+    .subtitle {
+      color: #777;
+      font-size: 14px;
+      margin-bottom: 32px;
+    }
+
+    .field {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #999;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 12px 14px;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    input:focus, select:focus {
+      border-color: #444;
+    }
+
+    input::placeholder {
+      color: #555;
+    }
+
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      background: #161616;
+      border: 1px solid #2a2a2a;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 14px center;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .row .field {
+      flex: 1;
+    }
+
+    .logo-upload {
+      position: relative;
+      width: 100%;
+      padding: 24px;
+      background: #161616;
+      border: 2px dashed #2a2a2a;
+      border-radius: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    .logo-upload:hover {
+      border-color: #444;
+      background: #1a1a1a;
+    }
+
+    .logo-upload.has-file {
+      border-color: #3b82f6;
+      border-style: solid;
+    }
+
+    .logo-upload input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .logo-upload .icon {
+      font-size: 24px;
+      margin-bottom: 4px;
+      color: #555;
+    }
+
+    .logo-upload .text {
+      font-size: 13px;
+      color: #666;
+    }
+
+    .logo-upload .filename {
+      font-size: 13px;
+      color: #3b82f6;
+      font-weight: 500;
+    }
+
+    .logo-preview {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 8px;
+      border-radius: 8px;
+    }
+
+    button.start {
+      width: 100%;
+      padding: 14px;
+      background: #fff;
+      color: #000;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: opacity 0.2s;
+    }
+
+    button.start:hover {
+      opacity: 0.85;
+    }
+
+    button.start:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    button.cancel {
+      width: 100%;
+      padding: 12px;
+      background: transparent;
+      color: #ef4444;
+      border: 1px solid #3a1515;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 8px;
+    }
+
+    button.cancel:hover {
+      background: #1a0808;
+    }
+
+    .progress-section {
+      display: none;
+      margin-top: 28px;
+    }
+
+    .progress-section.active {
+      display: block;
+    }
+
+    .progress-bar-track {
+      width: 100%;
+      height: 6px;
+      background: #1e1e1e;
+      border-radius: 3px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: #fff;
+      border-radius: 3px;
+      width: 0%;
+      transition: width 0.3s ease;
+    }
+
+    .progress-status {
+      font-size: 13px;
+      color: #888;
+      margin-bottom: 12px;
+    }
+
+    .log {
+      background: #111;
+      border: 1px solid #1e1e1e;
+      border-radius: 10px;
+      padding: 14px;
+      max-height: 240px;
+      overflow-y: auto;
+      font-family: 'SF Mono', 'Menlo', monospace;
+      font-size: 12px;
+      line-height: 1.6;
+      color: #777;
+    }
+
+    .log .entry {
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .log .error {
+      color: #ef4444;
+    }
+
+    .log .success {
+      color: #22c55e;
+    }
+
+    .done-banner {
+      display: none;
+      padding: 16px;
+      background: #0a1f0a;
+      border: 1px solid #14532d;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 16px;
+    }
+
+    .done-banner.active {
+      display: block;
+    }
+
+    .done-banner .count {
+      font-size: 20px;
+      font-weight: 700;
+      color: #22c55e;
+    }
+
+    .done-banner .label {
+      font-size: 13px;
+      color: #4ade80;
+      margin-top: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>yt-ripper</h1>
+    <p class="subtitle">Rip clips into branded shorts</p>
+
+    <form id="form" enctype="multipart/form-data">
+      <div class="field">
+        <label>YouTube Source</label>
+        <input type="text" name="source" placeholder="Channel, playlist, or video URL" required>
+      </div>
+
+      <div class="field">
+        <label>Output Folder</label>
+        <input type="text" name="output_dir" placeholder="./output" value="./output">
+      </div>
+
+      <div class="row">
+        <div class="field" style="flex:3">
+          <label>Top Banner Text</label>
+          <input type="text" name="top_text" placeholder="Download Fitnit now!" value="Download Fitnit now!">
+        </div>
+        <div class="field" style="flex:1">
+          <label>Animate</label>
+          <select name="text_anim">
+            <option value="drop-in" selected>Drop In</option>
+            <option value="slam">Slam</option>
+            <option value="slide-up">Slide Up</option>
+            <option value="bounce">Bounce</option>
+            <option value="typewriter">Typewriter</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field" style="flex:3">
+          <label>Bottom Text</label>
+          <input type="text" name="bottom_text" placeholder="link in bio">
+        </div>
+        <div class="field" style="flex:1">
+          <label>Animate</label>
+          <select name="bt_anim">
+            <option value="drop-in" selected>Drop In</option>
+            <option value="slam">Slam</option>
+            <option value="slide-up">Slide Up</option>
+            <option value="bounce">Bounce</option>
+            <option value="typewriter">Typewriter</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Clip (sec)</label>
+          <input type="number" name="clip_duration" value="3" min="1" max="30" step="0.5">
+        </div>
+        <div class="field">
+          <label>End Card (sec)</label>
+          <input type="number" name="logo_duration" value="2" min="0.5" max="10" step="0.5">
+        </div>
+        <div class="field">
+          <label>Max Videos</label>
+          <input type="number" name="max_videos" value="10" min="1" max="100">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>App Logo</label>
+        <div class="logo-upload" id="logoUpload">
+          <input type="file" name="logo" accept="image/png,image/jpeg,image/webp" id="logoInput">
+          <div id="logoPlaceholder">
+            <div class="icon">+</div>
+            <div class="text">Drop logo or click</div>
+          </div>
+          <img id="logoPreviewImg" class="logo-preview" style="display:none" alt="Logo preview">
+          <div id="logoFilename" class="filename" style="display:none"></div>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="field" style="flex:1">
+          <label>Logo Position</label>
+          <select name="logo_position">
+            <option value="center" selected>Center</option>
+            <option value="top-center">Top Center</option>
+            <option value="bottom-center">Bottom Center</option>
+            <option value="top-left">Top Left</option>
+            <option value="top-right">Top Right</option>
+            <option value="bottom-left">Bottom Left</option>
+            <option value="bottom-right">Bottom Right</option>
+          </select>
+        </div>
+        <div class="field" style="flex:1">
+          <label>Logo Animate</label>
+          <select name="logo_anim">
+            <option value="drop-in" selected>Drop In</option>
+            <option value="slam">Slam</option>
+            <option value="slide-up">Slide Up</option>
+            <option value="bounce">Bounce</option>
+            <option value="none">None</option>
+          </select>
+        </div>
+      </div>
+
+      <button type="submit" class="start" id="startBtn">Start Ripping</button>
+    </form>
+
+    <div class="progress-section" id="progressSection">
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" id="progressBar"></div>
+      </div>
+      <div class="progress-status" id="progressStatus">Starting...</div>
+      <div class="log" id="log"></div>
+      <button class="cancel" id="cancelBtn">Cancel</button>
+    </div>
+
+    <div class="done-banner" id="doneBanner">
+      <div class="count" id="doneCount"></div>
+      <div class="label">shorts created</div>
+    </div>
+  </div>
+
+  <script>
+    const form = document.getElementById('form');
+    const startBtn = document.getElementById('startBtn');
+    const cancelBtn = document.getElementById('cancelBtn');
+    const progressSection = document.getElementById('progressSection');
+    const progressBar = document.getElementById('progressBar');
+    const progressStatus = document.getElementById('progressStatus');
+    const logEl = document.getElementById('log');
+    const doneBanner = document.getElementById('doneBanner');
+    const doneCount = document.getElementById('doneCount');
+    const logoUpload = document.getElementById('logoUpload');
+    const logoInput = document.getElementById('logoInput');
+    const logoPlaceholder = document.getElementById('logoPlaceholder');
+    const logoPreviewImg = document.getElementById('logoPreviewImg');
+    const logoFilename = document.getElementById('logoFilename');
+
+    let currentJobId = null;
+
+    // ─── localStorage persistence ───────────────────────────────────
+    const STORAGE_KEY = 'yt_ripper_settings';
+    const persistFields = ['source', 'output_dir', 'top_text', 'bottom_text',
+                           'clip_duration', 'logo_duration', 'max_videos',
+                           'logo_position', 'text_anim', 'logo_anim', 'bt_anim'];
+
+    function saveSettings() {
+      const settings = {};
+      persistFields.forEach(name => {
+        const el = form.elements[name];
+        if (el) settings[name] = el.value;
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+
+    function loadSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+        if (!saved) return;
+        persistFields.forEach(name => {
+          const el = form.elements[name];
+          if (el && saved[name] !== undefined && saved[name] !== '') {
+            el.value = saved[name];
+          }
+        });
+      } catch (_) {}
+    }
+
+    // Load saved settings on page load
+    loadSettings();
+
+    // Save on every input change
+    persistFields.forEach(name => {
+      const el = form.elements[name];
+      if (el) el.addEventListener('input', saveSettings);
+      if (el && el.tagName === 'SELECT') el.addEventListener('change', saveSettings);
+    });
+
+    // Logo upload preview — uses safe DOM methods (no innerHTML)
+    logoInput.addEventListener('change', () => {
+      const file = logoInput.files[0];
+      if (file) {
+        logoUpload.classList.add('has-file');
+        logoPlaceholder.style.display = 'none';
+        logoPreviewImg.src = URL.createObjectURL(file);
+        logoPreviewImg.style.display = 'block';
+        logoFilename.textContent = file.name;
+        logoFilename.style.display = 'block';
+      } else {
+        logoUpload.classList.remove('has-file');
+        logoPlaceholder.style.display = '';
+        logoPreviewImg.style.display = 'none';
+        logoFilename.style.display = 'none';
+      }
+    });
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(form);
+
+      startBtn.disabled = true;
+      doneBanner.classList.remove('active');
+      progressSection.classList.add('active');
+      logEl.textContent = '';
+      progressBar.style.width = '0%';
+      progressStatus.textContent = 'Starting...';
+
+      try {
+        const res = await fetch('/api/start', { method: 'POST', body: formData });
+        const data = await res.json();
+
+        if (data.error) {
+          addLog(data.error, 'error');
+          startBtn.disabled = false;
+          return;
+        }
+
+        currentJobId = data.job_id;
+
+        const evtSource = new EventSource('/api/stream/' + encodeURIComponent(data.job_id));
+
+        evtSource.addEventListener('log', (e) => {
+          const d = JSON.parse(e.data);
+          addLog(d.message);
+        });
+
+        evtSource.addEventListener('progress', (e) => {
+          const d = JSON.parse(e.data);
+          const pct = Math.round((d.current / d.total) * 100);
+          progressBar.style.width = pct + '%';
+          progressStatus.textContent = 'Processing ' + d.current + ' of ' + d.total + (d.video_id ? ' (' + d.video_id + ')' : '');
+        });
+
+        evtSource.addEventListener('done', (e) => {
+          const d = JSON.parse(e.data);
+          evtSource.close();
+          addLog('Complete! ' + d.success + '/' + d.total + ' shorts created.', 'success');
+          progressBar.style.width = '100%';
+          progressStatus.textContent = 'Done!';
+          doneCount.textContent = d.success + '/' + d.total;
+          doneBanner.classList.add('active');
+          startBtn.disabled = false;
+          currentJobId = null;
+        });
+
+        evtSource.addEventListener('error', (e) => {
+          // SSE error events may not have parseable data
+          try {
+            const d = JSON.parse(e.data);
+            addLog(d.message, 'error');
+          } catch (_) {
+            addLog('Connection lost.', 'error');
+          }
+          evtSource.close();
+          startBtn.disabled = false;
+          currentJobId = null;
+        });
+
+      } catch (err) {
+        addLog('Failed to start: ' + err.message, 'error');
+        startBtn.disabled = false;
+      }
+    });
+
+    cancelBtn.addEventListener('click', async () => {
+      if (currentJobId) {
+        await fetch('/api/cancel/' + encodeURIComponent(currentJobId), { method: 'POST' });
+        addLog('Cancelling...', 'error');
+      }
+    });
+
+    function addLog(msg, cls) {
+      const div = document.createElement('div');
+      div.className = 'entry' + (cls ? ' ' + cls : '');
+      div.textContent = msg;
+      logEl.appendChild(div);
+      logEl.scrollTop = logEl.scrollHeight;
+    }
+  </script>
+</body>
+</html>
