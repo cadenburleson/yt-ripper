@@ -141,6 +141,14 @@ def index():
 def auth_google():
     """Redirect to Google OAuth consent screen."""
     client_secrets_path = os.getenv("GOOGLE_CLIENT_SECRETS", "./client_secret.json")
+
+    # If GOOGLE_CLIENT_SECRETS is JSON content, write to a temp file
+    if client_secrets_path.strip().startswith("{"):
+        _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
+        _tmp.write(client_secrets_path)
+        _tmp.flush()
+        client_secrets_path = _tmp.name
+
     if not os.path.exists(client_secrets_path):
         return (
             jsonify(
