@@ -25,6 +25,10 @@ import youtube_uploader
 app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = os.getenv("FLASK_SECRET_KEY", "dev-secret-key-change-in-production")
 
+# Trust proxy headers (for Fly.io and other reverse proxies)
+from werkzeug.middleware.proxy_fix import ProxyFix
+app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
+
 # Store job progress per session
 jobs = {}
 
