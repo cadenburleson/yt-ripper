@@ -193,7 +193,7 @@ def auth_google():
     return redirect(auth_url)
 
 
-@app.route("/auth/callback")
+@app.route("/oauth2callback")
 def auth_callback():
     """Handle OAuth token exchange."""
     code = request.args.get("code")
