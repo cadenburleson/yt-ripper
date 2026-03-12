@@ -381,7 +381,9 @@ def api_upload_scan():
     if not user_id:
         return jsonify({"error": "Not authenticated"}), 401
 
-    output_dir = request.json.get("output_dir", "./output")
+    # Default to /data/output on production (Fly.io), ./output locally
+    default_output = "/data/output" if os.path.exists("/data") else "./output"
+    output_dir = request.json.get("output_dir", default_output)
     output_dir = os.path.expanduser(output_dir)
 
     if not os.path.isdir(output_dir):
@@ -416,7 +418,9 @@ def api_upload_schedule():
     interval_hours = float(data.get("interval_hours", 24))
     title_template = data.get("title_template", "")
     description = data.get("description", "")
-    output_dir = os.path.expanduser(data.get("output_dir", "./output"))
+    # Default to /data/output on production (Fly.io), ./output locally
+    default_output = "/data/output" if os.path.exists("/data") else "./output"
+    output_dir = os.path.expanduser(data.get("output_dir", default_output))
     made_for_kids = 1 if data.get("made_for_kids") else 0
 
     db.upsert_scheduler_config(
