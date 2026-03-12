@@ -386,6 +386,11 @@ def api_upload_scan():
     output_dir = request.json.get("output_dir", default_output)
     output_dir = os.path.expanduser(output_dir)
 
+    # If it's a simple folder name (no slashes), prepend /data/output or ./output
+    if output_dir and "/" not in output_dir and "\\" not in output_dir:
+        base = "/data/output" if os.path.exists("/data") else "./output"
+        output_dir = str(Path(base) / output_dir)
+
     if not os.path.isdir(output_dir):
         return jsonify({"error": f"Directory not found: {output_dir}"}), 400
 
@@ -421,6 +426,12 @@ def api_upload_schedule():
     # Default to /data/output on production (Fly.io), ./output locally
     default_output = "/data/output" if os.path.exists("/data") else "./output"
     output_dir = os.path.expanduser(data.get("output_dir", default_output))
+
+    # If it's a simple folder name (no slashes), prepend /data/output or ./output
+    if output_dir and "/" not in output_dir and "\\" not in output_dir:
+        base = "/data/output" if os.path.exists("/data") else "./output"
+        output_dir = str(Path(base) / output_dir)
+
     made_for_kids = 1 if data.get("made_for_kids") else 0
 
     db.upsert_scheduler_config(
