@@ -621,6 +621,38 @@ def cancel(job_id):
     return jsonify({"error": "Job not found"}), 404
 
 
+# ─── Folder Management ───────────────────────────────────────────────────────
+
+@app.route("/api/folders")
+def api_folders():
+    """List folders in /data/output/."""
+    base_path = Path("/data/output") if os.path.exists("/data") else Path("./output")
+    base_path.mkdir(parents=True, exist_ok=True)
+
+    folders = [f.name for f in base_path.iterdir() if f.is_dir()]
+    return jsonify({"folders": sorted(folders)})
+
+
+@app.route("/api/folders", methods=["POST"])
+def create_folder():
+    """Create a new folder in /data/output/."""
+    data = request.json or {}
+    folder_name = data.get("name", "").strip()
+
+    if not folder_name or "/" in folder_name or "\\" in folder_name:
+        return jsonify({"error": "Invalid folder name"}), 400
+
+    base_path = Path("/data/output") if os.path.exists("/data") else Path("./output")
+    base_path.mkdir(parents=True, exist_ok=True)
+
+    new_folder = base_path / folder_name
+    try:
+        new_folder.mkdir(exist_ok=True)
+        return jsonify({"ok": True, "folder": folder_name})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 if __name__ == "__main__":
     os.makedirs("templates", exist_ok=True)
     os.makedirs("static", exist_ok=True)
