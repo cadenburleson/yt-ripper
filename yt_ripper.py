@@ -483,6 +483,248 @@ def _escape_ffmpeg_text(text):
     return text
 
 
+# ─── Remotion Renderer ──────────────────────────────────────────────────
+
+REMOTION_DIR = Path(__file__).parent / "remotion"
+
+
+def _check_remotion():
+    """Check if the Remotion project is set up (node_modules installed)."""
+    if not (REMOTION_DIR / "node_modules").exists():
+        print("Remotion not installed. Running npm install...")
+        result = subprocess.run(
+            ["npm", "install"],
+            cwd=str(REMOTION_DIR),
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            print(f"npm install failed: {result.stderr[-400:]}")
+            return False
+    return True
+
+
+def render_endcard_remotion(
+    output_path,
+    top_text,
+    bottom_text="",
+    logo_path=None,
+    background_path=None,
+    logo_duration=2,
+    logo_entrance="spring",
+    show_device_mockup=False,
+    device_screen_path=None,
+    device_scale=1.0,
+    device_entrance="up",
+):
+    """Render a branded end card using Remotion instead of FFmpeg filters."""
+    if not _check_remotion():
+        print("    Falling back to FFmpeg renderer")
+        return None
+
+    # Copy assets into remotion/public/ so Remotion can serve them
+    public_dir = REMOTION_DIR / "public"
+    public_dir.mkdir(exist_ok=True)
+
+    props = {
+        "topText": top_text,
+        "bottomText": bottom_text,
+        "logoSrc": "",
+        "backgroundSrc": "",
+        "logoEntrance": logo_entrance,
+        "showDeviceMockup": show_device_mockup,
+        "deviceScreenSrc": "",
+        "deviceScale": device_scale,
+        "deviceEntrance": device_entrance,
+    }
+
+    copied_files = []
+    if logo_path and os.path.exists(logo_path):
+        dest = str(public_dir / "input_logo.png")
+        shutil.copy2(logo_path, dest)
+        copied_files.append(dest)
+        props["logoSrc"] = "input_logo.png"
+    if background_path and os.path.exists(background_path):
+        dest = str(public_dir / "input_bg.png")
+        shutil.copy2(background_path, dest)
+        copied_files.append(dest)
+        props["backgroundSrc"] = "input_bg.png"
+    if device_screen_path and os.path.exists(device_screen_path):
+        dest = str(public_dir / "input_device_screen.png")
+        shutil.copy2(device_screen_path, dest)
+        copied_files.append(dest)
+        props["deviceScreenSrc"] = "input_device_screen.png"
+
+    duration_frames = int(logo_duration * FPS)
+
+    cmd = [
+        "node", str(REMOTION_DIR / "render.mjs"),
+        "--comp", "BrandedEndCard",
+        "--output", os.path.abspath(output_path),
+        "--props", json.dumps(props),
+        "--duration", str(duration_frames),
+    ]
+
+    print(f"    Rendering end card with Remotion...")
+    result = subprocess.run(cmd, capture_output=True, text=True)
+
+    # Clean up copied assets
+    for f in copied_files:
+        if os.path.exists(f):
+            os.remove(f)
+
+    if result.returncode != 0:
+        error_output = (result.stderr or "") + (result.stdout or "")
+        print(f"    Remotion render failed: {error_output[-600:]}")
+        return None
+
+    if not os.path.exists(output_path):
+        print(f"    Remotion render produced no output file")
+        return None
+
+    return output_path
+
+
+def build_short_remotion(
+    clip_path,
+    output_path,
+    logo_path,
+    top_text,
+    bottom_text,
+    clip_duration,
+    logo_duration,
+    logo_entrance="spring",
+    show_device_mockup=False,
+    device_screen_path=None,
+    device_scale=1.0,
+    device_entrance="up",
+):
+    """
+    Build a branded short using Remotion for the end card.
+    Pass 1: FFmpeg — full-screen ripped clip (same as before)
+    Pass 2: Remotion — animated end card with spring physics
+    Pass 3: FFmpeg — concat both parts
+    """
+    w, h = get_video_info(clip_path)
+    if not w:
+        print(f"    Skipping {clip_path}: cannot read video info")
+        return False
+
+    base = output_path.rsplit(".", 1)[0]
+    part1_path = f"{base}_p1.mp4"
+    part2_path = f"{base}_p2.mp4"
+
+    # Extract a background frame from the clip for the end card
+    bg_frame_path = f"{base}_bg.png"
+    subprocess.run(
+        [
+            "ffmpeg", "-y",
+            "-ss", str(max(0, clip_duration - 0.1)),
+            "-i", clip_path,
+            "-frames:v", "1",
+            bg_frame_path,
+        ],
+        capture_output=True, text=True, check=False,
+    )
+
+    try:
+        # ─── Pass 1: Full-screen clip (reuses FFmpeg) ─────────────────
+        p1_filter = (
+            f"[0:v]scale={SHORTS_WIDTH}:{SHORTS_HEIGHT}:"
+            f"force_original_aspect_ratio=increase,"
+            f"crop={SHORTS_WIDTH}:{SHORTS_HEIGHT},"
+            f"setsar=1,fps={FPS}[outv]"
+        )
+        cmd1 = [
+            "ffmpeg", "-y",
+            "-i", clip_path,
+            "-filter_complex", p1_filter,
+            "-map", "[outv]", "-map", "0:a?",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+            "-c:a", "aac", "-b:a", "128k",
+            "-t", str(clip_duration),
+            "-r", str(FPS), "-pix_fmt", "yuv420p",
+            part1_path,
+        ]
+        r1 = subprocess.run(cmd1, capture_output=True, text=True)
+        if r1.returncode != 0:
+            print(f"    FFmpeg Part1 error: {r1.stderr[-400:]}")
+            return False
+
+        if not os.path.exists(part1_path):
+            print(f"    Part 1 was not created")
+            return False
+
+        # ─── Pass 2: Remotion end card ────────────────────────────────
+        bg_path = bg_frame_path if os.path.exists(bg_frame_path) else None
+        rendered = render_endcard_remotion(
+            output_path=part2_path,
+            top_text=top_text,
+            bottom_text=bottom_text,
+            logo_path=logo_path,
+            background_path=bg_path,
+            logo_duration=logo_duration,
+            logo_entrance=logo_entrance,
+            show_device_mockup=show_device_mockup,
+            device_screen_path=device_screen_path,
+            device_scale=device_scale,
+            device_entrance=device_entrance,
+        )
+
+        if not rendered:
+            print("    Remotion render failed")
+            return False
+
+        # ─── Normalize Part 2: add silent audio + force yuv420p ──────
+        part2_norm = f"{base}_p2_norm.mp4"
+        norm_cmd = [
+            "ffmpeg", "-y",
+            "-i", part2_path,
+            "-f", "lavfi", "-i", f"anullsrc=r=44100:cl=stereo",
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+            "-pix_fmt", "yuv420p",
+            "-c:a", "aac", "-b:a", "128k",
+            "-shortest",
+            "-r", str(FPS),
+            part2_norm,
+        ]
+        rn = subprocess.run(norm_cmd, capture_output=True, text=True)
+        if rn.returncode != 0:
+            print(f"    FFmpeg normalize error: {rn.stderr[-400:]}")
+            part2_norm = part2_path
+
+        # ─── Pass 3: Concat ───────────────────────────────────────────
+        concat_list = f"{base}_concat.txt"
+        with open(concat_list, "w") as f:
+            f.write(f"file '{os.path.abspath(part1_path)}'\n")
+            f.write(f"file '{os.path.abspath(part2_norm)}'\n")
+
+        cmd3 = [
+            "ffmpeg", "-y",
+            "-f", "concat", "-safe", "0",
+            "-i", concat_list,
+            "-c:v", "libx264", "-preset", "fast", "-crf", "23",
+            "-pix_fmt", "yuv420p",
+            "-r", str(FPS),
+            "-movflags", "+faststart",
+            output_path,
+        ]
+        r3 = subprocess.run(cmd3, capture_output=True, text=True)
+        if r3.returncode != 0:
+            print(f"    FFmpeg Concat error: {r3.stderr[-400:]}")
+            return False
+
+        return True
+
+    finally:
+        for f in [
+            part1_path, part2_path, bg_frame_path,
+            f"{base}_p2_norm.mp4", f"{base}_concat.txt",
+        ]:
+            if os.path.exists(f):
+                os.remove(f)
+
+
 def main():
     parser = argparse.ArgumentParser(
         description="Rip YouTube clips and brand them as shorts",
@@ -558,6 +800,16 @@ Examples:
         choices=list(ANIMATION_PRESETS.keys()),
         help="Bottom text animation (default: drop-in)"
     )
+    parser.add_argument(
+        "--renderer", default="ffmpeg",
+        choices=["ffmpeg", "remotion"],
+        help="Renderer for the end card: ffmpeg (classic) or remotion (spring animations)"
+    )
+    parser.add_argument(
+        "--logo-entrance", default="spring",
+        choices=["spring", "spin", "bounce", "fade"],
+        help="Logo entrance animation for Remotion renderer (default: spring)"
+    )
 
     args = parser.parse_args()
 
@@ -595,21 +847,36 @@ Examples:
 
             # Build branded short
             output_path = str(output_dir / f"short_{video_id}.mp4")
-            print(f"  Building branded short...")
-            if build_short(
-                clip_path=clip_path,
-                output_path=output_path,
-                logo_path=args.logo,
-                top_text=args.top_text,
-                bottom_text=args.bottom_text,
-                clip_duration=args.clip_duration,
-                logo_duration=args.logo_duration,
-                font_path=args.font,
-                logo_position=args.logo_position,
-                text_anim=args.text_anim,
-                logo_anim=args.logo_anim,
-                bt_anim=args.bt_anim,
-            ):
+            print(f"  Building branded short ({args.renderer})...")
+
+            if args.renderer == "remotion":
+                success = build_short_remotion(
+                    clip_path=clip_path,
+                    output_path=output_path,
+                    logo_path=args.logo,
+                    top_text=args.top_text,
+                    bottom_text=args.bottom_text,
+                    clip_duration=args.clip_duration,
+                    logo_duration=args.logo_duration,
+                    logo_entrance=args.logo_entrance,
+                )
+            else:
+                success = build_short(
+                    clip_path=clip_path,
+                    output_path=output_path,
+                    logo_path=args.logo,
+                    top_text=args.top_text,
+                    bottom_text=args.bottom_text,
+                    clip_duration=args.clip_duration,
+                    logo_duration=args.logo_duration,
+                    font_path=args.font,
+                    logo_position=args.logo_position,
+                    text_anim=args.text_anim,
+                    logo_anim=args.logo_anim,
+                    bt_anim=args.bt_anim,
+                )
+
+            if success:
                 success_count += 1
                 print(f"  Done: {output_path}")
             else:

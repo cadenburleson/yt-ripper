@@ -274,12 +274,222 @@
       color: #4ade80;
       margin-top: 2px;
     }
+
+    /* ─── Animation Preview ──────────────────────────────── */
+    .preview-section {
+      margin-bottom: 20px;
+    }
+
+    .preview-frame {
+      width: 200px;
+      height: 400px;
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      background: #1a1a2e;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5), 0 0 0 3px #222;
+      position: relative;
+    }
+
+    .preview-banner {
+      width: 100%;
+      height: 60px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .preview-banner-text {
+      font-size: 10px;
+      font-weight: 800;
+      color: #000;
+      text-align: center;
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      line-height: 1.2;
+      opacity: 0;
+    }
+
+    .preview-body {
+      width: 100%;
+      height: calc(100% - 60px);
+      background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      position: relative;
+    }
+
+    .preview-logo {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      overflow: hidden;
+    }
+
+    .preview-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .preview-device {
+      display: none;
+      width: 56px;
+      height: 110px;
+      border-radius: 10px;
+      background: linear-gradient(145deg, #1a1a1a, #2d2d2d);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.08);
+      padding: 3px;
+      opacity: 0;
+    }
+
+    .preview-device-screen {
+      width: 100%;
+      height: 100%;
+      border-radius: 6px;
+      overflow: hidden;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .preview-device-screen img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .preview-device-notch {
+      position: absolute;
+      top: 3px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 5px;
+      background: #1a1a1a;
+      border-radius: 0 0 3px 3px;
+      z-index: 1;
+    }
+
+    .preview-bottom-text {
+      font-size: 9px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+      opacity: 0;
+    }
+
+    .preview-replay {
+      display: block;
+      margin: 10px auto 0;
+      padding: 8px 20px;
+      background: transparent;
+      color: #888;
+      border: 1px solid #333;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .preview-replay:hover {
+      color: #fff;
+      border-color: #555;
+    }
+
+    /* Spring-like keyframes */
+    @keyframes springIn {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.15); opacity: 1; }
+      75% { transform: scale(0.95); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+    @keyframes spinIn {
+      0% { transform: scale(0) rotate(180deg); opacity: 0; }
+      60% { transform: scale(1.1) rotate(-10deg); opacity: 1; }
+      80% { transform: scale(0.97) rotate(3deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    @keyframes bounceIn {
+      0% { transform: translateY(-80px); opacity: 0; }
+      40% { transform: translateY(8px); opacity: 1; }
+      65% { transform: translateY(-4px); }
+      80% { transform: translateY(2px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes fadeIn {
+      0% { opacity: 0; }
+      100% { opacity: 1; }
+    }
+    @keyframes dropIn {
+      0% { transform: translateY(-20px); opacity: 0; }
+      50% { transform: translateY(3px); opacity: 1; }
+      75% { transform: translateY(-1px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes slamIn {
+      0% { transform: translateY(-60px) scale(1.3); opacity: 0; }
+      30% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    @keyframes slideUp {
+      0% { transform: translateY(30px); opacity: 0; }
+      60% { transform: translateY(-2px); opacity: 1; }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes bounceText {
+      0% { transform: translateY(-15px); opacity: 0; }
+      40% { transform: translateY(3px); opacity: 1; }
+      70% { transform: translateY(-1px); }
+      100% { transform: translateY(0); opacity: 1; }
+    }
+    @keyframes typeIn {
+      0% { opacity: 0; }
+      10% { opacity: 1; }
+      100% { opacity: 1; }
+    }
+    @keyframes slideLeft {
+      0% { transform: translateX(60px); opacity: 0; }
+      60% { transform: translateX(-3px); opacity: 1; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideRight {
+      0% { transform: translateX(-60px); opacity: 0; }
+      60% { transform: translateX(3px); opacity: 1; }
+      100% { transform: translateX(0); opacity: 1; }
+    }
   </style>
 </head>
 <body>
   <div class="container">
-    <h1>yt-ripper</h1>
-    <p class="subtitle">Rip clips into branded shorts</p>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+      <div>
+        <h1>yt-ripper</h1>
+        <p class="subtitle">Rip clips into branded shorts</p>
+      </div>
+      <div id="authSection" style="text-align: right;">
+        <a id="connectBtn" href="/auth/google" style="padding: 12px 24px; background: #3b82f6; color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 14px; display: inline-block; cursor: pointer;">
+          Connect YouTube
+        </a>
+        <div id="connectedBadge" style="display: none;">
+          <div style="font-size: 12px; color: #4ade80; font-weight: 600; margin-bottom: 4px;">✓ Connected as <span id="channelName"></span></div>
+          <button id="disconnectBtn" onclick="disconnect()" style="font-size: 12px; color: #ef4444; background: none; border: none; cursor: pointer; text-decoration: underline;">Disconnect</button>
+        </div>
+      </div>
+    </div>
 
     <form id="form" enctype="multipart/form-data">
       <div class="field">
@@ -356,33 +566,198 @@
         </div>
       </div>
 
-      <div class="row">
-        <div class="field" style="flex:1">
-          <label>Logo Position</label>
-          <select name="logo_position">
-            <option value="center" selected>Center</option>
-            <option value="top-center">Top Center</option>
-            <option value="bottom-center">Bottom Center</option>
-            <option value="top-left">Top Left</option>
-            <option value="top-right">Top Right</option>
-            <option value="bottom-left">Bottom Left</option>
-            <option value="bottom-right">Bottom Right</option>
+      <div class="field">
+        <label>Renderer</label>
+        <select name="renderer" id="rendererSelect">
+          <option value="ffmpeg" selected>FFmpeg (classic)</option>
+          <option value="remotion">Remotion (spring animations)</option>
+        </select>
+      </div>
+
+      <!-- FFmpeg-specific options -->
+      <div id="ffmpegOptions">
+        <div class="row">
+          <div class="field" style="flex:1">
+            <label>Logo Position</label>
+            <select name="logo_position">
+              <option value="center" selected>Center</option>
+              <option value="top-center">Top Center</option>
+              <option value="bottom-center">Bottom Center</option>
+              <option value="top-left">Top Left</option>
+              <option value="top-right">Top Right</option>
+              <option value="bottom-left">Bottom Left</option>
+              <option value="bottom-right">Bottom Right</option>
+            </select>
+          </div>
+          <div class="field" style="flex:1">
+            <label>Logo Animate</label>
+            <select name="logo_anim">
+              <option value="drop-in" selected>Drop In</option>
+              <option value="slam">Slam</option>
+              <option value="slide-up">Slide Up</option>
+              <option value="bounce">Bounce</option>
+              <option value="none">None</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Remotion-specific options -->
+      <div id="remotionOptions" style="display:none">
+        <div class="field">
+          <label>Logo Entrance</label>
+          <select name="logo_entrance">
+            <option value="spring" selected>Spring (scale pop)</option>
+            <option value="spin">Spin (rotate in)</option>
+            <option value="bounce">Bounce (drop from above)</option>
+            <option value="fade">Fade</option>
           </select>
         </div>
-        <div class="field" style="flex:1">
-          <label>Logo Animate</label>
-          <select name="logo_anim">
-            <option value="drop-in" selected>Drop In</option>
-            <option value="slam">Slam</option>
-            <option value="slide-up">Slide Up</option>
-            <option value="bounce">Bounce</option>
-            <option value="none">None</option>
-          </select>
+
+        <div style="border-top: 1px solid #2a2a2a; padding-top: 16px; margin-top: 16px;">
+          <h3 style="font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-weight: 600;">Animation Sizes</h3>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Banner Height (px)</label>
+              <input type="number" name="banner_height" id="bannerHeightInput" min="100" max="500" value="320" step="10">
+            </div>
+            <div class="field" style="flex:1">
+              <label>Logo Size (px)</label>
+              <input type="number" name="logo_size" id="logoSizeInput" min="80" max="300" value="180" step="10">
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Bottom Text (px)</label>
+              <input type="number" name="bottom_text_size" id="bottomTextSizeInput" min="24" max="60" value="44" step="2">
+            </div>
+          </div>
         </div>
+      </div>
+
+      <!-- Device Mockup (Remotion only) -->
+      <div id="deviceMockupSection" style="display:none">
+        <div class="field">
+          <label style="display:flex; align-items:center; gap:8px; cursor:pointer; text-transform:none; letter-spacing:0">
+            <input type="checkbox" name="show_device_mockup" id="showDeviceMockup" style="width:auto; accent-color:#3b82f6">
+            <span style="text-transform:uppercase; letter-spacing:0.5px">Show Device Mockup</span>
+          </label>
+        </div>
+        <div id="deviceScreenUploadSection" style="display:none">
+          <div class="field">
+            <label>Device Screen Content</label>
+            <div class="logo-upload" id="deviceUpload">
+              <input type="file" name="device_screen" accept="image/png,image/jpeg,image/webp" id="deviceInput">
+              <div id="devicePlaceholder">
+                <div class="icon">+</div>
+                <div class="text">App screenshot or image</div>
+              </div>
+              <img id="devicePreviewImg" class="logo-preview" style="display:none; width:36px; height:64px; border-radius:6px" alt="Screen preview">
+              <div id="deviceFilename" class="filename" style="display:none"></div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Scale</label>
+              <input type="number" name="device_scale" id="deviceScale" min="0.5" max="2.0" value="1.0" step="0.1">
+            </div>
+            <div class="field" style="flex:1">
+              <label>Position</label>
+              <select name="device_position" id="devicePosition">
+                <option value="center" selected>Center</option>
+                <option value="top-left">Top Left</option>
+                <option value="top-center">Top Center</option>
+                <option value="top-right">Top Right</option>
+                <option value="bottom-left">Bottom Left</option>
+                <option value="bottom-center">Bottom Center</option>
+                <option value="bottom-right">Bottom Right</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="field" style="flex:1">
+              <label>Entrance</label>
+              <select name="device_entrance" id="deviceEntrance">
+                <option value="up" selected>Slide Up</option>
+                <option value="down">Slide Down</option>
+                <option value="left">Slide Left</option>
+                <option value="right">Slide Right</option>
+                <option value="scale">Scale Pop</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Animation Preview -->
+      <div class="preview-section">
+        <label>End Card Preview</label>
+        <div class="preview-frame" id="previewFrame">
+          <div class="preview-banner">
+            <div class="preview-banner-text" id="previewTopText">Download Fitnit now!</div>
+          </div>
+          <div class="preview-body">
+            <div class="preview-logo" id="previewLogo">
+              <img id="previewLogoImg" style="display:none" alt="">
+            </div>
+            <div id="previewDeviceWrap" style="display:none; opacity:0">
+              <div class="preview-device" id="previewDevice" style="display:block; opacity:1">
+                <div style="position:relative; width:100%; height:100%">
+                  <div class="preview-device-notch"></div>
+                  <div class="preview-device-screen">
+                    <img id="previewDeviceImg" style="display:none" alt="">
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="preview-bottom-text" id="previewBottomText">link in bio</div>
+          </div>
+        </div>
+        <button type="button" class="preview-replay" id="previewReplay">Replay Animation</button>
       </div>
 
       <button type="submit" class="start" id="startBtn">Start Ripping</button>
     </form>
+
+    <!-- Auto-Post to YouTube Section -->
+    <div id="autoPostSection" style="display: none; margin-top: 40px; border-top: 1px solid #2a2a2a; padding-top: 32px;">
+      <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: #fff;">Auto-Post to YouTube</h2>
+
+      <div class="field">
+        <label>Output Folder</label>
+        <input type="text" id="uploadOutputDir" placeholder="./output" value="./output">
+      </div>
+
+      <div class="row">
+        <div class="field" style="flex: 2">
+          <label>Post every (hours)</label>
+          <input type="number" id="uploadInterval" value="24" min="0.01" step="0.01">
+        </div>
+        <div class="field">
+          <label>Description</label>
+          <input type="text" id="uploadDescription" placeholder="e.g. Check link in bio">
+        </div>
+      </div>
+
+      <div class="field">
+        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; text-transform: none; letter-spacing: 0;">
+          <input type="checkbox" id="madeForKids" style="width: auto; accent-color: #3b82f6;">
+          <span>Made for Kids</span>
+        </label>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button type="button" id="scanBtn" class="start" style="flex: 1;">Scan for Videos</button>
+        <button type="button" id="toggleSchedulerBtn" class="start" style="flex: 1;">Start Scheduling</button>
+      </div>
+
+      <div id="uploadStatusSection" style="margin-top: 20px; display: none;">
+        <label style="margin-bottom: 12px; display: block;">Upload Queue</label>
+        <div id="uploadJobsTable" style="background: #111; border: 1px solid #1e1e1e; border-radius: 10px; overflow: hidden;">
+          <div style="padding: 12px; text-align: center; color: #666;">No videos queued</div>
+        </div>
+      </div>
+    </div>
 
     <div class="progress-section" id="progressSection">
       <div class="progress-bar-track">
@@ -421,7 +796,9 @@
     const STORAGE_KEY = 'yt_ripper_settings';
     const persistFields = ['source', 'output_dir', 'top_text', 'bottom_text',
                            'clip_duration', 'logo_duration', 'max_videos',
-                           'logo_position', 'text_anim', 'logo_anim', 'bt_anim'];
+                           'logo_position', 'text_anim', 'logo_anim', 'bt_anim',
+                           'renderer', 'logo_entrance', 'device_scale', 'device_position', 'device_entrance',
+                           'banner_height', 'logo_size', 'bottom_text_size'];
 
     function saveSettings() {
       const settings = {};
@@ -445,8 +822,35 @@
       } catch (_) {}
     }
 
+    // Renderer toggle
+    const rendererSelect = document.getElementById('rendererSelect');
+    const ffmpegOptions = document.getElementById('ffmpegOptions');
+    const remotionOptions = document.getElementById('remotionOptions');
+
+    const deviceMockupSection = document.getElementById('deviceMockupSection');
+    const showDeviceMockupCb = document.getElementById('showDeviceMockup');
+    const deviceScreenUploadSection = document.getElementById('deviceScreenUploadSection');
+    const deviceUpload = document.getElementById('deviceUpload');
+    const deviceInput = document.getElementById('deviceInput');
+    const devicePlaceholder = document.getElementById('devicePlaceholder');
+    const devicePreviewImg = document.getElementById('devicePreviewImg');
+    const deviceFilename = document.getElementById('deviceFilename');
+
+    function updateRendererUI() {
+      const isRemotion = rendererSelect.value === 'remotion';
+      ffmpegOptions.style.display = isRemotion ? 'none' : '';
+      remotionOptions.style.display = isRemotion ? '' : 'none';
+      deviceMockupSection.style.display = isRemotion ? '' : 'none';
+    }
+
+    rendererSelect.addEventListener('change', () => {
+      updateRendererUI();
+      saveSettings();
+    });
+
     // Load saved settings on page load
     loadSettings();
+    updateRendererUI();
 
     // Save on every input change
     persistFields.forEach(name => {
@@ -455,7 +859,126 @@
       if (el && el.tagName === 'SELECT') el.addEventListener('change', saveSettings);
     });
 
-    // Logo upload preview — uses safe DOM methods (no innerHTML)
+    // ─── Logo persistence via localStorage ─────────────────────────
+    const LOGO_STORAGE_KEY = 'yt_ripper_logo';
+    let savedLogoDataURL = null;
+
+    function saveLogoToStorage(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const data = { name: file.name, dataURL: reader.result };
+        try {
+          localStorage.setItem(LOGO_STORAGE_KEY, JSON.stringify(data));
+        } catch (_) {
+          // localStorage full — silently skip
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadLogoFromStorage() {
+      try {
+        const raw = localStorage.getItem(LOGO_STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.dataURL && data.name) {
+          savedLogoDataURL = data.dataURL;
+          logoUpload.classList.add('has-file');
+          logoPlaceholder.style.display = 'none';
+          logoPreviewImg.src = data.dataURL;
+          logoPreviewImg.style.display = 'block';
+          logoFilename.textContent = data.name;
+          logoFilename.style.display = 'block';
+        }
+      } catch (_) {}
+    }
+
+    function dataURLtoFile(dataURL, filename) {
+      const arr = dataURL.split(',');
+      const mime = arr[0].match(/:(.*?);/)[1];
+      const bstr = atob(arr[1]);
+      const u8arr = new Uint8Array(bstr.length);
+      for (let i = 0; i < bstr.length; i++) u8arr[i] = bstr.charCodeAt(i);
+      return new File([u8arr], filename, { type: mime });
+    }
+
+    loadLogoFromStorage();
+
+    // ─── Device screen persistence via localStorage ─────────────────
+    const DEVICE_STORAGE_KEY = 'yt_ripper_device_screen';
+    let savedDeviceDataURL = null;
+
+    function saveDeviceToStorage(file) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          localStorage.setItem(DEVICE_STORAGE_KEY, JSON.stringify({ name: file.name, dataURL: reader.result }));
+        } catch (_) {}
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function loadDeviceFromStorage() {
+      try {
+        const raw = localStorage.getItem(DEVICE_STORAGE_KEY);
+        if (!raw) return;
+        const data = JSON.parse(raw);
+        if (data.dataURL && data.name) {
+          savedDeviceDataURL = data.dataURL;
+          deviceUpload.classList.add('has-file');
+          devicePlaceholder.style.display = 'none';
+          devicePreviewImg.src = data.dataURL;
+          devicePreviewImg.style.display = 'block';
+          deviceFilename.textContent = data.name;
+          deviceFilename.style.display = 'block';
+        }
+      } catch (_) {}
+    }
+
+    // Load device mockup checkbox state
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+      if (saved && saved.show_device_mockup === 'true') {
+        showDeviceMockupCb.checked = true;
+        deviceScreenUploadSection.style.display = '';
+      }
+    } catch (_) {}
+
+    loadDeviceFromStorage();
+
+    showDeviceMockupCb.addEventListener('change', () => {
+      deviceScreenUploadSection.style.display = showDeviceMockupCb.checked ? '' : 'none';
+      // Save to settings
+      const settings = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+      settings.show_device_mockup = showDeviceMockupCb.checked ? 'true' : 'false';
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+      runPreview();
+    });
+
+    deviceInput.addEventListener('change', () => {
+      const file = deviceInput.files[0];
+      if (file) {
+        deviceUpload.classList.add('has-file');
+        devicePlaceholder.style.display = 'none';
+        devicePreviewImg.src = URL.createObjectURL(file);
+        devicePreviewImg.style.display = 'block';
+        deviceFilename.textContent = file.name;
+        deviceFilename.style.display = 'block';
+        saveDeviceToStorage(file);
+        savedDeviceDataURL = null;
+        setTimeout(runPreview, 100);
+      } else {
+        deviceUpload.classList.remove('has-file');
+        devicePlaceholder.style.display = '';
+        devicePreviewImg.style.display = 'none';
+        deviceFilename.style.display = 'none';
+        localStorage.removeItem(DEVICE_STORAGE_KEY);
+        savedDeviceDataURL = null;
+        runPreview();
+      }
+    });
+
+    // Logo upload preview
     logoInput.addEventListener('change', () => {
       const file = logoInput.files[0];
       if (file) {
@@ -465,11 +988,15 @@
         logoPreviewImg.style.display = 'block';
         logoFilename.textContent = file.name;
         logoFilename.style.display = 'block';
+        saveLogoToStorage(file);
+        savedLogoDataURL = null; // clear cached; real file is now in the input
       } else {
         logoUpload.classList.remove('has-file');
         logoPlaceholder.style.display = '';
         logoPreviewImg.style.display = 'none';
         logoFilename.style.display = 'none';
+        localStorage.removeItem(LOGO_STORAGE_KEY);
+        savedLogoDataURL = null;
       }
     });
 
@@ -477,6 +1004,12 @@
       e.preventDefault();
 
       const formData = new FormData(form);
+
+      // If no file input but we have a saved logo, re-attach it
+      if (!logoInput.files[0] && savedLogoDataURL) {
+        const name = logoFilename.textContent || 'logo.png';
+        formData.set('logo', dataURLtoFile(savedLogoDataURL, name));
+      }
 
       startBtn.disabled = true;
       doneBanner.classList.remove('active');
@@ -556,6 +1089,392 @@
       logEl.appendChild(div);
       logEl.scrollTop = logEl.scrollHeight;
     }
+
+    // ─── Animation Preview ──────────────────────────────────────────
+    const previewTopText = document.getElementById('previewTopText');
+    const previewLogo = document.getElementById('previewLogo');
+    const previewLogoImg = document.getElementById('previewLogoImg');
+    const previewDeviceWrap = document.getElementById('previewDeviceWrap');
+    const previewDevice = document.getElementById('previewDevice');
+    const previewDeviceImg = document.getElementById('previewDeviceImg');
+    const previewBottomText = document.getElementById('previewBottomText');
+    const previewReplay = document.getElementById('previewReplay');
+
+    const textAnimMap = {
+      'drop-in': 'dropIn', 'slam': 'slamIn', 'slide-up': 'slideUp',
+      'bounce': 'bounceText', 'typewriter': 'typeIn', 'none': 'fadeIn'
+    };
+    const logoAnimMapFFmpeg = {
+      'drop-in': 'bounceIn', 'slam': 'slamIn', 'slide-up': 'slideUp',
+      'bounce': 'bounceIn', 'none': 'fadeIn'
+    };
+    const logoAnimMapRemotion = {
+      'spring': 'springIn', 'spin': 'spinIn', 'bounce': 'bounceIn', 'fade': 'fadeIn'
+    };
+
+    function getLogoSrc() {
+      if (logoInput.files && logoInput.files[0]) {
+        return URL.createObjectURL(logoInput.files[0]);
+      }
+      if (savedLogoDataURL) return savedLogoDataURL;
+      return null;
+    }
+
+    function getDeviceScreenSrc() {
+      if (deviceInput.files && deviceInput.files[0]) {
+        return URL.createObjectURL(deviceInput.files[0]);
+      }
+      if (savedDeviceDataURL) return savedDeviceDataURL;
+      return null;
+    }
+
+    function runPreview() {
+      const topText = form.elements['top_text'].value || 'Download Fitnit now!';
+      const bottomText = form.elements['bottom_text'].value || '';
+      const isRemotion = rendererSelect.value === 'remotion';
+
+      // Update banner height in preview (scale to preview size: 400px total = 1920px video)
+      const bannerHeightVal = parseFloat(bannerHeightInput?.value || 320);
+      const previewBannerHeight = Math.max(15, (bannerHeightVal / 1920) * 400);
+      const previewBanner = document.querySelector('.preview-banner');
+      if (previewBanner) {
+        previewBanner.style.height = previewBannerHeight + 'px';
+      }
+
+      // Update text content
+      previewTopText.textContent = topText;
+      previewBottomText.textContent = bottomText || 'link in bio';
+
+      // Update logo
+      const logoSrc = getLogoSrc();
+      if (logoSrc) {
+        previewLogoImg.src = logoSrc;
+        previewLogoImg.style.display = 'block';
+      } else {
+        previewLogoImg.style.display = 'none';
+      }
+
+      // Device mockup
+      const showDevice = isRemotion && showDeviceMockupCb.checked;
+      previewDeviceWrap.style.display = showDevice ? 'block' : 'none';
+      if (showDevice) {
+        const devSrc = getDeviceScreenSrc();
+        if (devSrc) {
+          previewDeviceImg.src = devSrc;
+          previewDeviceImg.style.display = 'block';
+        } else {
+          previewDeviceImg.style.display = 'none';
+        }
+        // Apply scale to inner device element (not animated)
+        const scaleVal = parseFloat(form.elements['device_scale'].value) || 1.0;
+        const mappedScale = scaleVal * 1.2;
+        previewDevice.style.transform = `scale(${mappedScale})`;
+
+        // Apply positioning
+        const position = form.elements['device_position'].value || 'center';
+        const positionStyles = {
+          'center': { position: 'relative', top: 'auto', left: 'auto', right: 'auto', bottom: 'auto', alignSelf: 'center' },
+          'top-left': { position: 'absolute', top: '10px', left: '10px', right: 'auto', bottom: 'auto', alignSelf: 'auto' },
+          'top-center': { position: 'absolute', top: '10px', left: '50%', right: 'auto', bottom: 'auto', alignSelf: 'auto', transform: 'translateX(-50%)' },
+          'top-right': { position: 'absolute', top: '10px', right: '10px', left: 'auto', bottom: 'auto', alignSelf: 'auto' },
+          'bottom-left': { position: 'absolute', bottom: '10px', left: '10px', top: 'auto', right: 'auto', alignSelf: 'auto' },
+          'bottom-center': { position: 'absolute', bottom: '10px', left: '50%', top: 'auto', right: 'auto', alignSelf: 'auto', transform: 'translateX(-50%)' },
+          'bottom-right': { position: 'absolute', bottom: '10px', right: '10px', top: 'auto', left: 'auto', alignSelf: 'auto' }
+        };
+        const styles = positionStyles[position] || positionStyles['center'];
+        Object.assign(previewDeviceWrap.style, styles);
+
+        // Adjust logo size based on custom size
+        const customLogoSize = parseFloat(logoSizeInput.value) || 180;
+        const logoScaleRatio = customLogoSize / 180;
+        const logoPreviewSize = Math.max(28, 36 * logoScaleRatio);
+        previewLogo.style.width = logoPreviewSize + 'px';
+        previewLogo.style.height = logoPreviewSize + 'px';
+      } else {
+        const customLogoSize = parseFloat(logoSizeInput.value) || 180;
+        const logoScaleRatio = customLogoSize / 180;
+        const logoPreviewSize = Math.max(36, 48 * logoScaleRatio);
+        previewLogo.style.width = logoPreviewSize + 'px';
+        previewLogo.style.height = logoPreviewSize + 'px';
+      }
+
+      // Determine animations
+      let textAnim, logoAnim, btAnim;
+      if (isRemotion) {
+        textAnim = 'dropIn';
+        logoAnim = logoAnimMapRemotion[form.elements['logo_entrance'].value] || 'springIn';
+        btAnim = 'slideUp';
+      } else {
+        textAnim = textAnimMap[form.elements['text_anim'].value] || 'dropIn';
+        logoAnim = logoAnimMapFFmpeg[form.elements['logo_anim'].value] || 'bounceIn';
+        btAnim = textAnimMap[form.elements['bt_anim'].value] || 'dropIn';
+      }
+
+      // Reset animations by cloning nodes
+      resetAndAnimate(previewTopText, textAnim, 0.1);
+      resetAndAnimate(previewLogo, logoAnim, 0.5);
+      if (showDevice) {
+        const entranceMap = { 'up': 'slideUp', 'down': 'dropIn', 'left': 'slideLeft', 'right': 'slideRight', 'scale': 'springIn' };
+        const deviceAnim = entranceMap[form.elements['device_entrance'].value] || 'slideUp';
+        resetAndAnimate(previewDeviceWrap, deviceAnim, 0.7);
+      }
+      resetAndAnimate(previewBottomText, btAnim, showDevice ? 1.1 : 0.9);
+    }
+
+    function resetAndAnimate(el, animName, delaySec) {
+      el.style.animation = 'none';
+      el.style.opacity = '0';
+      // Force reflow
+      void el.offsetWidth;
+      el.style.animation = animName + ' 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) ' + delaySec + 's forwards';
+    }
+
+    previewReplay.addEventListener('click', runPreview);
+
+    // Update preview when relevant fields change
+    ['top_text', 'bottom_text'].forEach(name => {
+      const el = form.elements[name];
+      if (el) el.addEventListener('input', runPreview);
+    });
+    ['text_anim', 'logo_anim', 'bt_anim', 'renderer', 'logo_entrance', 'device_scale', 'device_position', 'device_entrance'].forEach(name => {
+      const el = form.elements[name];
+      if (el) el.addEventListener('change', runPreview);
+    });
+    logoInput.addEventListener('change', () => setTimeout(runPreview, 100));
+
+    // Initial preview on load
+    setTimeout(runPreview, 300);
+
+    // ─── Animation Size Controls ──────────────────────────────────
+    const bannerHeightInput = document.getElementById('bannerHeightInput');
+    const logoSizeInput = document.getElementById('logoSizeInput');
+    const bottomTextSizeInput = document.getElementById('bottomTextSizeInput');
+
+    // Update preview when sizes change
+    if (bannerHeightInput) {
+      [bannerHeightInput, logoSizeInput, bottomTextSizeInput].forEach(input => {
+        input.addEventListener('input', runPreview);
+        input.addEventListener('change', saveSettings);
+      });
+    }
+
+    // ─── Auto-Post to YouTube ───────────────────────────────────
+    const authSection = document.getElementById('authSection');
+    const connectBtn = document.getElementById('connectBtn');
+    const connectedBadge = document.getElementById('connectedBadge');
+    const channelName = document.getElementById('channelName');
+    const autoPostSection = document.getElementById('autoPostSection');
+    const scanBtn = document.getElementById('scanBtn');
+    const toggleSchedulerBtn = document.getElementById('toggleSchedulerBtn');
+    const uploadOutputDir = document.getElementById('uploadOutputDir');
+    const uploadInterval = document.getElementById('uploadInterval');
+    const uploadDescription = document.getElementById('uploadDescription');
+    const madeForKids = document.getElementById('madeForKids');
+    const uploadStatusSection = document.getElementById('uploadStatusSection');
+    const uploadJobsTable = document.getElementById('uploadJobsTable');
+
+    let currentUser = null;
+    let schedulerEnabled = false;
+
+    async function checkAuthStatus() {
+      try {
+        const res = await fetch('/api/me');
+        const data = await res.json();
+
+        if (data.authenticated) {
+          currentUser = data;
+          channelName.textContent = data.channel_name;
+          connectBtn.style.display = 'none';
+          connectedBadge.style.display = 'block';
+          autoPostSection.style.display = 'block';
+
+          if (data.scheduler) {
+            schedulerEnabled = data.scheduler.enabled;
+            if (data.scheduler.output_dir) {
+              uploadOutputDir.value = data.scheduler.output_dir;
+            }
+            if (data.scheduler.interval_hours) {
+              uploadInterval.value = data.scheduler.interval_hours;
+            }
+            if (data.scheduler.description) {
+              uploadDescription.value = data.scheduler.description;
+            }
+            madeForKids.checked = data.scheduler.made_for_kids || false;
+            updateSchedulerButton();
+          }
+
+          // Poll upload status
+          pollUploadStatus();
+        } else {
+          currentUser = null;
+          connectBtn.style.display = 'inline-block';
+          connectedBadge.style.display = 'none';
+          autoPostSection.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Auth check failed:', err);
+      }
+    }
+
+    function updateSchedulerButton() {
+      toggleSchedulerBtn.textContent = schedulerEnabled ? 'Stop Scheduling' : 'Start Scheduling';
+      toggleSchedulerBtn.style.background = schedulerEnabled ? '#ef4444' : '#fff';
+      toggleSchedulerBtn.style.color = schedulerEnabled ? '#fff' : '#000';
+    }
+
+    async function disconnect() {
+      try {
+        await fetch('/auth/logout', { method: 'POST' });
+        window.location.reload();
+      } catch (err) {
+        console.error('Logout failed:', err);
+      }
+    }
+
+    scanBtn.addEventListener('click', async () => {
+      scanBtn.disabled = true;
+      try {
+        const res = await fetch('/api/upload/scan', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ output_dir: uploadOutputDir.value }),
+        });
+
+        if (!res.ok) {
+          alert('Scan failed: ' + await res.text());
+          return;
+        }
+
+        const data = await res.json();
+        alert('Enqueued ' + data.enqueued + ' new video(s)');
+        await pollUploadStatus();
+      } catch (err) {
+        alert('Scan error: ' + err.message);
+      } finally {
+        scanBtn.disabled = false;
+      }
+    });
+
+    toggleSchedulerBtn.addEventListener('click', async () => {
+      if (schedulerEnabled) {
+        // Stop scheduler
+        try {
+          const res = await fetch('/api/upload/stop', { method: 'POST' });
+          if (res.ok) {
+            schedulerEnabled = false;
+            updateSchedulerButton();
+          }
+        } catch (err) {
+          alert('Stop failed: ' + err.message);
+        }
+      } else {
+        // Start scheduler
+        try {
+          const res = await fetch('/api/upload/schedule', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              interval_hours: parseFloat(uploadInterval.value),
+              description: uploadDescription.value,
+              output_dir: uploadOutputDir.value,
+              made_for_kids: madeForKids.checked,
+            }),
+          });
+
+          if (!res.ok) {
+            alert('Schedule failed: ' + await res.text());
+            return;
+          }
+
+          schedulerEnabled = true;
+          updateSchedulerButton();
+        } catch (err) {
+          alert('Schedule error: ' + err.message);
+        }
+      }
+    });
+
+    async function pollUploadStatus() {
+      if (!currentUser) return;
+
+      try {
+        const res = await fetch('/api/upload/status');
+        const data = await res.json();
+
+        if (data.jobs && data.jobs.length > 0) {
+          uploadStatusSection.style.display = 'block';
+          renderUploadJobs(data.jobs);
+        } else {
+          uploadStatusSection.style.display = 'none';
+        }
+      } catch (err) {
+        console.error('Status poll failed:', err);
+      }
+    }
+
+    function renderUploadJobs(jobs) {
+      uploadJobsTable.textContent = '';
+
+      jobs.forEach(job => {
+        const statusColor = job.status === 'uploaded' ? '#22c55e' : job.status === 'queued' ? '#3b82f6' : '#ef4444';
+        const uploadedAt = job.uploaded_at ? new Date(job.uploaded_at).toLocaleDateString() : '-';
+
+        const row = document.createElement('div');
+        row.style.cssText = 'padding: 12px; border-bottom: 1px solid #1e1e1e; display: flex; justify-content: space-between; align-items: center; font-size: 13px;';
+
+        const filenameDiv = document.createElement('div');
+        filenameDiv.style.cssText = 'flex: 1;';
+
+        const filenamePart = document.createElement('div');
+        filenamePart.style.cssText = 'color: #e5e5e5; margin-bottom: 2px;';
+        filenamePart.textContent = job.filename;
+
+        const titlePart = document.createElement('div');
+        titlePart.style.cssText = 'color: #666;';
+        titlePart.textContent = job.title || '';
+
+        filenameDiv.appendChild(filenamePart);
+        filenameDiv.appendChild(titlePart);
+
+        const statusDiv = document.createElement('div');
+        statusDiv.style.cssText = 'color: ' + statusColor + '; font-weight: 600; margin: 0 12px; min-width: 80px;';
+        statusDiv.textContent = job.status;
+
+        const dateDiv = document.createElement('div');
+        dateDiv.style.cssText = 'color: #666; min-width: 100px;';
+        dateDiv.textContent = uploadedAt;
+
+        const linkDiv = document.createElement('div');
+        linkDiv.style.cssText = 'min-width: 60px; text-align: right;';
+
+        if (job.youtube_id) {
+          const link = document.createElement('a');
+          link.href = 'https://youtube.com/watch?v=' + encodeURIComponent(job.youtube_id);
+          link.target = '_blank';
+          link.style.cssText = 'color: #3b82f6; text-decoration: none;';
+          link.textContent = 'Watch';
+          linkDiv.appendChild(link);
+        } else {
+          linkDiv.textContent = '-';
+        }
+
+        row.appendChild(filenameDiv);
+        row.appendChild(statusDiv);
+        row.appendChild(dateDiv);
+        row.appendChild(linkDiv);
+
+        uploadJobsTable.appendChild(row);
+      });
+    }
+
+    // Check auth and poll every 15s when scheduler is active
+    checkAuthStatus();
+
+    setInterval(() => {
+      if (currentUser && schedulerEnabled) {
+        pollUploadStatus();
+      }
+    }, 15000);
   </script>
 </body>
 </html>

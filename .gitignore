@@ -4,3 +4,9 @@ __pycache__/
 .DS_Store
 *.tmp
 static/
+remotion/node_modules/
+remotion/out/
+remotion/dist/
+app.db
+token*.json
+client_secret*.json
