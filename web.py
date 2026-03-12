@@ -63,6 +63,13 @@ def scheduler_loop():
     """Background scheduler: upload queued videos on a schedule."""
     client_secrets_path = os.getenv("GOOGLE_CLIENT_SECRETS", "./client_secret.json")
 
+    # If GOOGLE_CLIENT_SECRETS is JSON content, write to a temp file
+    if client_secrets_path.strip().startswith("{"):
+        _tmp = tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False)
+        _tmp.write(client_secrets_path)
+        _tmp.flush()
+        client_secrets_path = _tmp.name
+
     while True:
         try:
             configs = db.get_active_schedulers()
@@ -587,5 +594,8 @@ def cancel(job_id):
 if __name__ == "__main__":
     os.makedirs("templates", exist_ok=True)
     os.makedirs("static", exist_ok=True)
-    print("Starting yt-ripper web UI at http://localhost:5001")
-    app.run(host="127.0.0.1", port=5001, debug=True)
+    host = os.getenv("HOST", "127.0.0.1")
+    port = int(os.getenv("PORT", "5001"))
+    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    print(f"Starting yt-ripper web UI at http://{host}:{port}")
+    app.run(host=host, port=port, debug=debug)

@@ -1,12 +1,13 @@
 """SQLite database wrapper for yt-ripper multi-user support."""
 
+import os
 import sqlite3
 import time
 from datetime import datetime
 from pathlib import Path
 
 
-DB_PATH = Path("app.db")
+DB_PATH = Path(os.getenv("DB_PATH", "app.db"))
 
 
 def get_connection():

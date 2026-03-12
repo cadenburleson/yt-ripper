@@ -1,0 +1,19 @@
+# Fly.io configuration for yt-ripper
+app = "yt-ripper"
+primary_region = "sjc"
+
+[build]
+dockerfile = "Dockerfile"
+
+[env]
+PORT = "8080"
+
+[http_service]
+internal_port = 8080
+force_https = true
+auto_stop_machines = false
+auto_start_machines = true
+
+[[mounts]]
+source = "yt_ripper_data"
+destination = "/data"
