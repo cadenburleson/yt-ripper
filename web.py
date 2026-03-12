@@ -135,8 +135,10 @@ def scheduler_loop():
 
 
 # Start scheduler thread
-scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
-scheduler_thread.start()
+# TODO: Debug why scheduler is crashing the app
+# scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
+# scheduler_thread.start()
+print("[App] Scheduler thread disabled for debugging")
 
 
 @app.route("/")
