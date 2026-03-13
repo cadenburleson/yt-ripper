@@ -491,6 +491,9 @@ def start_job():
     show_device_mockup = data.get("show_device_mockup") == "on"
     device_scale = float(data.get("device_scale", "1.0"))
     device_entrance = data.get("device_entrance", "up").strip()
+    banner_padding = float(data.get("banner_padding", "20"))
+    banner_color = data.get("banner_color", "#ffffff").strip()
+    text_color = data.get("text_color", "#000000").strip()
 
     # Save uploaded logo to temp file
     logo_path = None
@@ -564,6 +567,9 @@ def start_job():
                             device_screen_path=device_screen_path,
                             device_scale=device_scale,
                             device_entrance=device_entrance,
+                            banner_padding=banner_padding,
+                            banner_color=banner_color,
+                            text_color=text_color,
                         )
                     else:
                         build_ok = yt_ripper.build_short(
@@ -578,6 +584,9 @@ def start_job():
                             text_anim=text_anim,
                             logo_anim=logo_anim,
                             bt_anim=bt_anim,
+                            banner_padding=banner_padding,
+                            banner_color=banner_color,
+                            text_color=text_color,
                         )
 
                     if build_ok:

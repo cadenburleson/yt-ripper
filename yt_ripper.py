@@ -264,6 +264,9 @@ def build_short(
     text_anim="drop-in",
     logo_anim="drop-in",
     bt_anim="drop-in",
+    banner_padding=20,
+    banner_color="#ffffff",
+    text_color="#000000",
 ):
     """
     Build a single branded short using a two-pass approach:
@@ -516,6 +519,9 @@ def render_endcard_remotion(
     device_screen_path=None,
     device_scale=1.0,
     device_entrance="up",
+    banner_padding=20,
+    banner_color="#ffffff",
+    text_color="#000000",
 ):
     """Render a branded end card using Remotion instead of FFmpeg filters."""
     if not _check_remotion():
@@ -536,6 +542,9 @@ def render_endcard_remotion(
         "deviceScreenSrc": "",
         "deviceScale": device_scale,
         "deviceEntrance": device_entrance,
+        "bannerPadding": banner_padding,
+        "bannerColor": banner_color,
+        "textColor": text_color,
     }
 
     copied_files = []
@@ -598,6 +607,9 @@ def build_short_remotion(
     device_screen_path=None,
     device_scale=1.0,
     device_entrance="up",
+    banner_padding=20,
+    banner_color="#ffffff",
+    text_color="#000000",
 ):
     """
     Build a branded short using Remotion for the end card.
@@ -669,6 +681,9 @@ def build_short_remotion(
             device_screen_path=device_screen_path,
             device_scale=device_scale,
             device_entrance=device_entrance,
+            banner_padding=banner_padding,
+            banner_color=banner_color,
+            text_color=text_color,
         )
 
         if not rendered:
