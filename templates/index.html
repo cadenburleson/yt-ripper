@@ -602,6 +602,42 @@
         </div>
       </div>
 
+      <!-- Animation Sizes (for both FFmpeg and Remotion) -->
+      <div style="border-top: 1px solid #2a2a2a; padding-top: 16px; margin-top: 16px;">
+        <h3 style="font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-weight: 600;">Animation Sizes</h3>
+        <div class="row">
+          <div class="field" style="flex:1">
+            <label>Banner Height (px)</label>
+            <input type="number" name="banner_height" id="bannerHeightInput" min="100" max="500" value="320" step="10">
+          </div>
+          <div class="field" style="flex:1">
+            <label>Logo Size (px)</label>
+            <input type="number" name="logo_size" id="logoSizeInput" min="80" max="300" value="180" step="10">
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1">
+            <label>Bottom Text (px)</label>
+            <input type="number" name="bottom_text_size" id="bottomTextSizeInput" min="24" max="60" value="44" step="2">
+          </div>
+          <div class="field" style="flex:1">
+            <label>Side Padding (px)</label>
+            <input type="number" name="banner_padding" id="bannerPaddingInput" min="0" max="100" value="20" step="5">
+            <small style="display: block; margin-top: 4px; color: #666; font-size: 11px;">Safe area for text on sides</small>
+          </div>
+        </div>
+        <div class="row">
+          <div class="field" style="flex:1">
+            <label>Banner Background Color</label>
+            <input type="color" name="banner_color" id="bannerColorInput" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #334155; border-radius: 4px; cursor: pointer;">
+          </div>
+          <div class="field" style="flex:1">
+            <label>Text Color</label>
+            <input type="color" name="text_color" id="textColorInput" value="#000000" style="width: 100%; height: 40px; border: 1px solid #334155; border-radius: 4px; cursor: pointer;">
+          </div>
+        </div>
+      </div>
+
       <!-- Remotion-specific options -->
       <div id="remotionOptions" style="display:none">
         <div class="field">
@@ -612,41 +648,6 @@
             <option value="bounce">Bounce (drop from above)</option>
             <option value="fade">Fade</option>
           </select>
-        </div>
-
-        <div style="border-top: 1px solid #2a2a2a; padding-top: 16px; margin-top: 16px;">
-          <h3 style="font-size: 12px; color: #999; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; font-weight: 600;">Animation Sizes</h3>
-          <div class="row">
-            <div class="field" style="flex:1">
-              <label>Banner Height (px)</label>
-              <input type="number" name="banner_height" id="bannerHeightInput" min="100" max="500" value="320" step="10">
-            </div>
-            <div class="field" style="flex:1">
-              <label>Logo Size (px)</label>
-              <input type="number" name="logo_size" id="logoSizeInput" min="80" max="300" value="180" step="10">
-            </div>
-          </div>
-          <div class="row">
-            <div class="field" style="flex:1">
-              <label>Bottom Text (px)</label>
-              <input type="number" name="bottom_text_size" id="bottomTextSizeInput" min="24" max="60" value="44" step="2">
-            </div>
-            <div class="field" style="flex:1">
-              <label>Side Padding (px)</label>
-              <input type="number" name="banner_padding" id="bannerPaddingInput" min="0" max="100" value="20" step="5">
-              <small style="display: block; margin-top: 4px; color: #666; font-size: 11px;">Safe area for text on sides</small>
-            </div>
-          </div>
-          <div class="row">
-            <div class="field" style="flex:1">
-              <label>Banner Background Color</label>
-              <input type="color" name="banner_color" id="bannerColorInput" value="#ffffff" style="width: 100%; height: 40px; border: 1px solid #334155; border-radius: 4px; cursor: pointer;">
-            </div>
-            <div class="field" style="flex:1">
-              <label>Text Color</label>
-              <input type="color" name="text_color" id="textColorInput" value="#000000" style="width: 100%; height: 40px; border: 1px solid #334155; border-radius: 4px; cursor: pointer;">
-            </div>
-          </div>
         </div>
       </div>
 
