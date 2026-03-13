@@ -32,6 +32,9 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1)
 # Store job progress per session
 jobs = {}
 
+# Scheduler wakeup signal (event-driven scheduling)
+scheduler_wakeup = threading.Event()
+
 # Initialize database
 db.init_db()
 
@@ -64,7 +67,12 @@ class Job:
 # ─── Scheduler ──────────────────────────────────────────────────────────────
 
 def scheduler_loop():
-    """Background scheduler: upload queued videos on a schedule."""
+    """Event-driven background scheduler: upload queued videos on a schedule.
+
+    Wakes up when:
+    1. It's time to upload (calculated next due time)
+    2. Config changes (scheduler_wakeup signal is set)
+    """
     try:
         client_secrets_path = os.getenv("GOOGLE_CLIENT_SECRETS", "./client_secret.json")
 
@@ -79,29 +87,33 @@ def scheduler_loop():
         print(f"[Scheduler] Error during initialization: {e}")
         return
 
+    print("[Scheduler] Started (event-driven)")
+
     while True:
         try:
             configs = db.get_active_schedulers()
+            now = time.time()
+            next_due_time = None
 
+            # Process each active scheduler and find when the next one is due
             for config in configs:
                 user_id = config["user_id"]
                 interval_hours = config["interval_hours"]
                 description = config["description"]
                 made_for_kids = config.get("made_for_kids", 0)
 
-                # Check if it's time to upload
+                # Calculate when this user's next upload is due
                 last_upload = db.get_last_upload_time(user_id)
-                now = time.time()
-                due = (
-                    last_upload is None
-                    or (now - last_upload) >= interval_hours * 3600
-                )
+                if last_upload is None:
+                    user_next_due = now  # Upload immediately if never uploaded
+                else:
+                    user_next_due = last_upload + (interval_hours * 3600)
 
-                if due:
+                # Check if it's time to upload NOW
+                if user_next_due <= now:
                     job = db.get_next_queued_job(user_id)
                     if job:
                         try:
-                            # Rebuild service and upload
                             user = db.get_user(user_id)
                             if not user:
                                 continue
@@ -113,7 +125,6 @@ def scheduler_loop():
                                 client_secrets_path,
                             )
 
-                            # Use description as both title and description
                             title = description
                             yt_id = youtube_uploader.upload_short(
                                 service, job["filepath"], title, description, made_for_kids
@@ -128,17 +139,29 @@ def scheduler_loop():
                             print(f"[Scheduler] Error uploading job {job['id']}: {e}")
                             db.update_upload_job(job["id"], "failed", None)
 
+                # Track the soonest next due time across all users
+                if next_due_time is None or user_next_due < next_due_time:
+                    next_due_time = user_next_due
+
+            # Calculate how long to sleep until next scheduled upload
+            if next_due_time is not None:
+                sleep_seconds = max(1, next_due_time - time.time())
+            else:
+                sleep_seconds = 60  # No active schedulers, check back in a minute
+
+            # Wait until wakeup signal OR timeout (next due time)
+            scheduler_wakeup.wait(timeout=sleep_seconds)
+            scheduler_wakeup.clear()
+
         except Exception as e:
             print(f"[Scheduler] Error in scheduler loop: {e}")
-
-        time.sleep(60)  # Check every minute
+            time.sleep(5)  # Brief pause before retry on error
 
 
 # Start scheduler thread
-# TODO: Debug why scheduler is crashing the app
-# scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
-# scheduler_thread.start()
-print("[App] Scheduler thread disabled for debugging")
+scheduler_thread = threading.Thread(target=scheduler_loop, daemon=True)
+scheduler_thread.start()
+print("[App] Scheduler thread started (event-driven)")
 
 
 @app.route("/")
@@ -408,6 +431,10 @@ def api_upload_scan():
             )
             new_jobs.append({"id": job_id, "filename": filename})
 
+    # Wake up the scheduler to process newly scanned videos
+    if new_jobs:
+        scheduler_wakeup.set()
+
     return jsonify({"enqueued": len(new_jobs), "jobs": new_jobs})
 
 
@@ -438,6 +465,9 @@ def api_upload_schedule():
         user_id, 1, interval_hours, title_template, description, output_dir, made_for_kids
     )
 
+    # Wake up the scheduler to recalculate next due time with new config
+    scheduler_wakeup.set()
+
     return jsonify({"ok": True})
 
 
@@ -460,6 +490,8 @@ def api_upload_stop():
             config["output_dir"],
             config.get("made_for_kids", 0),
         )
+        # Wake up the scheduler to recalculate next due time (one less active scheduler)
+        scheduler_wakeup.set()
 
     return jsonify({"ok": True})
 
