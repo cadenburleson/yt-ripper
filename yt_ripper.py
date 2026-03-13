@@ -51,6 +51,7 @@ def fetch_video_urls(source, max_videos):
         "--flat-playlist",
         "--print", "id",
         "--playlist-end", str(max_videos),
+        "--extractor-args", "youtube:player_client=web",  # Use web client to bypass restrictions
         source,
     ]
     result = subprocess.run(cmd, capture_output=True, text=True)
@@ -78,6 +79,7 @@ def download_clip(video_id, output_path, duration):
         "--no-playlist",
         "--sleep-interval", "2",  # Minimum 2s between requests to avoid rate limiting
         "--max-sleep-interval", "5",  # Random jitter up to 5s
+        "--extractor-args", "youtube:player_client=web",  # Use web client to bypass restrictions
         "-o", temp_full,
         # Download only what we need using --download-sections
         "--download-sections", f"*0-{duration}",
