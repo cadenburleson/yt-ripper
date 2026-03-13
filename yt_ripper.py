@@ -20,6 +20,8 @@ import sys
 import tempfile
 from pathlib import Path
 
+from PIL import Image, ImageDraw
+
 
 # ─── Defaults ────────────────────────────────────────────────────────────────
 
@@ -74,6 +76,8 @@ def download_clip(video_id, output_path, duration):
         "-f", "bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best",
         "--merge-output-format", "mp4",
         "--no-playlist",
+        "--sleep-interval", "2",  # Minimum 2s between requests to avoid rate limiting
+        "--max-sleep-interval", "5",  # Random jitter up to 5s
         "-o", temp_full,
         # Download only what we need using --download-sections
         "--download-sections", f"*0-{duration}",
@@ -251,6 +255,27 @@ def _auto_fontsize(text, max_width, base_size=52, min_size=28, padding=80):
     return min_size, _wrap_text(text, chars_per_line)
 
 
+def _round_corners(image_path, radius=30):
+    """Apply rounded corners to a logo image. Returns path to new image."""
+    try:
+        img = Image.open(image_path).convert("RGBA")
+
+        # Create a mask with rounded corners
+        size = img.size
+        mask = Image.new("L", size, 0)
+        draw = ImageDraw.Draw(mask)
+        draw.rounded_rectangle([(0, 0), size], radius=radius, fill=255)
+
+        # Apply mask and save to temp file
+        img.putalpha(mask)
+        temp_path = image_path.replace(".png", "_rounded.png").replace(".jpg", "_rounded.png").replace(".jpeg", "_rounded.png")
+        img.save(temp_path, "PNG")
+        return temp_path
+    except Exception as e:
+        print(f"    Warning: failed to round logo corners: {e}")
+        return image_path
+
+
 def build_short(
     clip_path,
     output_path,
@@ -286,6 +311,10 @@ def build_short(
     )
 
     has_logo = logo_path and os.path.exists(logo_path)
+
+    # Apply rounded corners to logo
+    if has_logo:
+        logo_path = _round_corners(logo_path, radius=30)
 
     # Auto-size and wrap the top text to fit within the banner
     fontsize_top, text_lines = _auto_fontsize(top_text, SHORTS_WIDTH)
@@ -625,6 +654,10 @@ def build_short_remotion(
     base = output_path.rsplit(".", 1)[0]
     part1_path = f"{base}_p1.mp4"
     part2_path = f"{base}_p2.mp4"
+
+    # Apply rounded corners to logo
+    if logo_path and os.path.exists(logo_path):
+        logo_path = _round_corners(logo_path, radius=30)
 
     # Extract a background frame from the clip for the end card
     bg_frame_path = f"{base}_bg.png"
