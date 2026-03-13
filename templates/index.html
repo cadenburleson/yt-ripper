@@ -739,6 +739,21 @@
     <div id="autoPostSection" style="display: none; margin-top: 40px; border-top: 1px solid #2a2a2a; padding-top: 32px;">
       <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 20px; color: #fff;">Auto-Post to YouTube</h2>
 
+      <!-- File Upload -->
+      <div style="margin-bottom: 24px; padding: 20px; background: #1a1a2e; border-radius: 8px; border: 2px dashed #3b82f6;">
+        <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #60a5fa;">📤 Upload Videos</h3>
+        <label for="videoFileInput" style="display: block; padding: 20px; text-align: center; cursor: pointer; border: 1px dashed #444; border-radius: 4px; background: #0f172a; transition: all 0.2s;">
+          <div style="color: #999; font-size: 13px;">Click to select or drag video files here</div>
+          <div style="color: #666; font-size: 11px; margin-top: 4px;">MP4 videos will be queued for upload</div>
+        </label>
+        <input type="file" id="videoFileInput" multiple accept=".mp4" style="display: none;">
+        <div id="uploadingFiles" style="margin-top: 12px; display: none;">
+          <div style="padding: 12px; background: #0f172a; border-radius: 4px; color: #60a5fa; font-size: 12px;">
+            <div id="uploadProgressText">Uploading files...</div>
+          </div>
+        </div>
+      </div>
+
       <!-- Folder Manager -->
       <div style="margin-bottom: 24px; padding: 16px; background: #1a1a2e; border-radius: 8px;">
         <h3 style="font-size: 14px; font-weight: 600; margin-bottom: 12px; color: #60a5fa;">📁 Manage Folders</h3>
@@ -1382,6 +1397,64 @@
         }
       } catch (e) {
         alert(`Error creating folder: ${e}`);
+      }
+    }
+
+    // File Upload Handler
+    const videoFileInput = document.getElementById('videoFileInput');
+    const uploadingFilesDiv = document.getElementById('uploadingFiles');
+
+    videoFileInput.addEventListener('change', handleFileUpload);
+
+    // Drag and drop
+    document.querySelector('label[for="videoFileInput"]').addEventListener('dragover', (e) => {
+      e.preventDefault();
+      e.currentTarget.style.background = '#1a2f4f';
+    });
+
+    document.querySelector('label[for="videoFileInput"]').addEventListener('dragleave', (e) => {
+      e.currentTarget.style.background = '#0f172a';
+    });
+
+    document.querySelector('label[for="videoFileInput"]').addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.currentTarget.style.background = '#0f172a';
+      videoFileInput.files = e.dataTransfer.files;
+      handleFileUpload();
+    });
+
+    async function handleFileUpload() {
+      const files = videoFileInput.files;
+      if (!files || files.length === 0) return;
+
+      uploadingFilesDiv.style.display = 'block';
+      const progressText = document.getElementById('uploadProgressText');
+
+      const formData = new FormData();
+      for (let file of files) {
+        formData.append('files', file);
+      }
+
+      try {
+        progressText.textContent = `Uploading ${files.length} file(s)...`;
+        const res = await fetch('/api/upload/files', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          progressText.textContent = `✓ Uploaded ${data.uploaded} file(s) - queued for upload`;
+          videoFileInput.value = '';
+          setTimeout(() => {
+            uploadingFilesDiv.style.display = 'none';
+            pollUploadStatus();
+          }, 2000);
+        } else {
+          progressText.textContent = `✗ Error: ${data.error}`;
+        }
+      } catch (e) {
+        progressText.textContent = `✗ Upload failed: ${e.message}`;
       }
     }
 

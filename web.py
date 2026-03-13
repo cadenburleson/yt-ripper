@@ -496,6 +496,55 @@ def api_upload_stop():
     return jsonify({"ok": True})
 
 
+@app.route("/api/upload/files", methods=["POST"])
+def api_upload_files():
+    """Upload video files for scheduling."""
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return jsonify({"error": "Not authenticated"}), 401
+
+    if "files" not in request.files or not request.files.getlist("files"):
+        return jsonify({"error": "No files provided"}), 400
+
+    config = db.get_scheduler_config(user_id)
+    if not config:
+        return jsonify({"error": "Scheduler not configured"}), 400
+
+    output_dir = config["output_dir"]
+    os.makedirs(output_dir, exist_ok=True)
+
+    uploaded_jobs = []
+    existing_jobs = db.get_upload_jobs(user_id)
+    existing_files = {job["filename"] for job in existing_jobs}
+
+    for file in request.files.getlist("files"):
+        if not file or not file.filename:
+            continue
+
+        # Generate video ID from filename (remove extension)
+        video_name = os.path.splitext(file.filename)[0]
+        filename = f"short_{video_name}.mp4"
+
+        # Skip if already exists
+        if filename in existing_files:
+            continue
+
+        # Save file
+        filepath = os.path.join(output_dir, filename)
+        file.save(filepath)
+
+        # Create upload job
+        job_id = db.add_upload_job(user_id, filename, filepath, video_name)
+        uploaded_jobs.append({"id": job_id, "filename": filename})
+
+    # Wake up scheduler if new jobs
+    if uploaded_jobs:
+        scheduler_wakeup.set()
+
+    return jsonify({"uploaded": len(uploaded_jobs), "jobs": uploaded_jobs})
+
+
 @app.route("/api/start", methods=["POST"])
 def start_job():
     data = request.form
